@@ -39,8 +39,10 @@ import static com.walmartlabs.concord.project.model.Import.SecretDefinition;
 @JsonSubTypes({
         @Type(value = ImportEntry.GitEntry.class, name = "git"),
         @Type(value = ImportEntry.MvnEntry.class, name = "mvn"),
+        @Type(value = ImportEntry.HttpEntry.class, name = "http"),
         @Type(value = ImmutableGitEntry.class, name = "git"),
         @Type(value = ImmutableMvnEntry.class, name = "mvn"),
+        @Type(value = ImmutableHttpEntry.class, name = "http"),
 })
 public interface ImportEntry {
 
@@ -92,6 +94,27 @@ public interface ImportEntry {
 
         static ImmutableMvnEntry.Builder builder() {
             return ImmutableMvnEntry.builder();
+        }
+    }
+
+    @Value.Immutable
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    @JsonSerialize(as = ImmutableHttpEntry.class)
+    @JsonDeserialize(as = ImmutableHttpEntry.class)
+    interface HttpEntry extends ImportEntry {
+
+        String url();
+
+        @Nullable
+        String dest();
+
+        @Override
+        default String type() {
+            return "http";
+        }
+
+        static ImmutableHttpEntry.Builder builder() {
+            return ImmutableHttpEntry.builder();
         }
     }
 }
